@@ -32,69 +32,78 @@ FleetScan AI uses video and artificial intelligence to assist mechanics in perfo
 - Early interest from fleet mechanics and techs
 - Ready for full build-out
 
-## Repository Structure
+## Tech Stack
 
-> **Note:** This project is in its initial setup phase. Update this section as the codebase grows.
+- **Framework:** Next.js 16 (App Router)
+- **Language:** TypeScript (strict mode)
+- **Styling:** Tailwind CSS 4
+- **AI Integration:** Anthropic Claude API (vision) — falls back to simulated results when no API key is set
+- **Package Manager:** npm
+
+## Repository Structure
 
 ```
 FleetscanAi-/
-├── CLAUDE.md            # This file — AI assistant guide
-└── ...                  # Project files to be added
+├── src/
+│   ├── app/
+│   │   ├── layout.tsx          # Root layout with nav bar
+│   │   ├── page.tsx            # Landing page (hero, features, how-it-works)
+│   │   ├── globals.css         # Global styles and CSS variables
+│   │   ├── scan/
+│   │   │   └── page.tsx        # Inspection scan page (camera → AI → results)
+│   │   └── api/
+│   │       └── analyze/
+│   │           └── route.ts    # POST /api/analyze — AI image analysis endpoint
+│   ├── components/
+│   │   ├── CameraCapture.tsx   # Camera/upload component with live preview
+│   │   └── AnalysisResults.tsx # Damage findings, DOT alerts, recommendations
+│   └── lib/
+│       └── analyzeImage.ts     # AI analysis logic (Claude API + simulated fallback)
+├── .env.example                # Environment variable template
+├── CLAUDE.md                   # This file
+├── package.json
+├── tsconfig.json
+├── next.config.ts
+├── postcss.config.mjs
+└── .gitignore
 ```
 
-<!--
-Suggested structure (update as implemented):
-├── src/
-│   ├── app/             # App routes and pages
-│   ├── components/      # Reusable UI components
-│   │   ├── inspection/  # Inspection checklist, form steps
-│   │   ├── camera/      # Video/photo capture UI
-│   │   ├── reports/     # Report generation and viewing
-│   │   └── labels/      # Sticker/label generation (Avery format)
-│   ├── lib/             # Utilities, helpers, API clients
-│   ├── models/          # Data models and types
-│   └── services/        # Business logic and AI integration
-│       ├── ai/          # AI damage detection, model inference
-│       ├── inspection/  # DOT checklist logic, form autofill
-│       ├── geolocation/ # GPS and timestamp capture
-│       └── labels/      # Label formatting, QR code generation
-├── public/              # Static assets, icons, label templates
-├── tests/               # Test files
-├── .env.example         # Environment variable template
-├── package.json         # Dependencies and scripts
-└── README.md            # User-facing documentation
--->
+### Key Files
+
+| File | Purpose |
+|------|---------|
+| `src/lib/analyzeImage.ts` | Core AI logic — sends image to Claude Vision API, parses structured damage results. Returns simulated data when `AI_MODEL_API_KEY` is not set. |
+| `src/components/CameraCapture.tsx` | Handles live camera stream (rear-facing preferred), photo capture, and file upload. Returns base64 image data. |
+| `src/components/AnalysisResults.tsx` | Renders damage findings with severity badges, DOT compliance flags, confidence scores, and recommendations. |
+| `src/app/api/analyze/route.ts` | API route that accepts base64 image POST and returns `AnalysisResult` JSON. |
 
 ## Development Setup
 
 ### Prerequisites
-- Node.js (v18+ recommended) or Python 3.10+ (depending on chosen stack)
+- Node.js v18+
 - Git
-- Package manager (npm, yarn, or pnpm)
+- npm
 
 ### Getting Started
 ```bash
-# Clone the repository
 git clone https://github.com/tstam423/FleetscanAi-.git
 cd FleetscanAi-
-
-# Install dependencies (update once package manager is chosen)
 npm install
-
-# Start development server
-npm run dev
+cp .env.example .env.local    # Optional: add AI_MODEL_API_KEY for real AI analysis
+npm run dev                    # Opens at http://localhost:3000
 ```
+
+### Without an API key
+The app works in **demo mode** — the scan page returns realistic simulated inspection results so you can develop and test the full UI flow without needing an Anthropic API key.
 
 ## Common Commands
 
-> Update this section as tooling is configured.
-
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start development server |
+| `npm run dev` | Start development server (http://localhost:3000) |
 | `npm run build` | Production build |
-| `npm run test` | Run test suite |
-| `npm run lint` | Run linter |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
 
 ## Architecture & Key Conventions
 
@@ -170,14 +179,10 @@ When working on this codebase as an AI assistant:
 
 > Document all required environment variables here as they are added.
 
-```bash
-# Example .env structure (create .env.local for local development)
-# DATABASE_URL=              # Database connection string
-# AI_MODEL_API_KEY=          # API key for AI vision/detection model
-# CLOUD_STORAGE_BUCKET=      # Storage for inspection photos/videos
-# NEXT_PUBLIC_APP_URL=       # Public-facing app URL
-# GEOLOCATION_API_KEY=       # Geolocation service key (if needed)
-# SIGNATURE_STORAGE_PATH=    # Path/bucket for signature data
-```
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `AI_MODEL_API_KEY` | No | Anthropic API key. When set, real Claude Vision analysis is used. When empty, simulated results are returned. |
+
+More variables will be added as features like database storage, geolocation, and label generation are implemented.
 
 **Never commit `.env` files.** Use `.env.example` to document required variables without values.
