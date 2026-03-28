@@ -4,13 +4,33 @@ This file provides context for AI assistants (Claude, Copilot, etc.) working on 
 
 ## Project Overview
 
-**FleetscanAI** is a trailer damage estimator application that uses AI to assess and estimate damage on fleet trailers. The app helps fleet operators quickly identify, document, and estimate repair costs for trailer damage through intelligent image analysis and reporting.
+**FleetScan AI** — *Smart Inspections. Safer Roads.*
 
-### Core Capabilities (Planned)
-- AI-powered trailer damage detection from photos
-- Damage severity classification and repair cost estimation
-- Fleet-wide damage tracking and reporting
-- User-friendly interface for field inspections
+FleetScan AI uses video and artificial intelligence to assist mechanics in performing **DOT trailer inspections**. It detects visible damage and compliance issues, auto-fills inspection forms, and generates printable inspection labels — streamlining compliance without replacing the human inspector.
+
+### Target Users
+- Fleet maintenance companies
+- Owner-operators
+- DOT officers
+- Mechanics and shop managers
+
+### Core Features
+- **AI-powered visual detection** of DOT compliance issues via video/photo
+- **Step-by-step digital checklist** mirroring official DOT inspection forms
+- **Auto-generated reports** with signature capture, timestamps, and geolocation
+- **Digital J.J. Keller sticker** — printable on standard Avery labels
+- **Optional QR-coded sticker rolls** for traceability and record lookups
+
+### Revenue Model
+- SaaS: monthly or per-inspection pricing
+- Fleet-wide licensing or integration with existing fleet software
+- Future add-ons: AR headset integration, QR-scan record lookups
+
+### Project Status
+- Concept developed, AI feature scope identified
+- UI prototype live on Replit
+- Early interest from fleet mechanics and techs
+- Ready for full build-out
 
 ## Repository Structure
 
@@ -24,13 +44,21 @@ FleetscanAi-/
 
 <!--
 Suggested structure (update as implemented):
-├── src/                 # Application source code
+├── src/
 │   ├── app/             # App routes and pages
 │   ├── components/      # Reusable UI components
+│   │   ├── inspection/  # Inspection checklist, form steps
+│   │   ├── camera/      # Video/photo capture UI
+│   │   ├── reports/     # Report generation and viewing
+│   │   └── labels/      # Sticker/label generation (Avery format)
 │   ├── lib/             # Utilities, helpers, API clients
 │   ├── models/          # Data models and types
 │   └── services/        # Business logic and AI integration
-├── public/              # Static assets
+│       ├── ai/          # AI damage detection, model inference
+│       ├── inspection/  # DOT checklist logic, form autofill
+│       ├── geolocation/ # GPS and timestamp capture
+│       └── labels/      # Label formatting, QR code generation
+├── public/              # Static assets, icons, label templates
 ├── tests/               # Test files
 ├── .env.example         # Environment variable template
 ├── package.json         # Dependencies and scripts
@@ -77,8 +105,8 @@ npm run dev
 - Use descriptive variable and function names (no abbreviations)
 
 ### File Naming
-- Components: `PascalCase.tsx` (e.g., `DamageReport.tsx`)
-- Utilities/helpers: `camelCase.ts` (e.g., `imageProcessor.ts`)
+- Components: `PascalCase.tsx` (e.g., `InspectionChecklist.tsx`)
+- Utilities/helpers: `camelCase.ts` (e.g., `labelGenerator.ts`)
 - Constants: `UPPER_SNAKE_CASE` for exported constants
 - Test files: `<filename>.test.ts` or `<filename>.spec.ts`
 
@@ -127,11 +155,16 @@ When working on this codebase as an AI assistant:
 7. **Ask when unsure** — If requirements are ambiguous, ask rather than assume
 8. **Security first** — Validate file uploads, sanitize inputs, use parameterized queries
 
-### Image/AI-Specific Considerations
-- Trailer damage images may be large — handle memory and upload size limits
-- AI model responses should be validated before displaying to users
-- Always provide fallback behavior when AI services are unavailable
-- Log AI model confidence scores for damage estimates
+### Domain-Specific Considerations
+- **DOT compliance is critical** — inspection checklists must match official DOT forms exactly
+- **Video/image uploads may be large** — handle memory, upload size limits, and compression
+- **AI model responses must be validated** before auto-filling inspection forms
+- **Always provide manual fallback** — AI assists the mechanic, never replaces them
+- **Geolocation and timestamps** are required for legal compliance on inspection records
+- **Label generation** must conform to standard Avery label dimensions
+- **QR codes** should encode enough data for offline record lookups
+- **Signature capture** must be legally valid — store as vector data, not just an image
+- Log AI model confidence scores for all detection results
 
 ## Environment Variables
 
@@ -139,10 +172,12 @@ When working on this codebase as an AI assistant:
 
 ```bash
 # Example .env structure (create .env.local for local development)
-# DATABASE_URL=
-# AI_MODEL_API_KEY=
-# CLOUD_STORAGE_BUCKET=
-# NEXT_PUBLIC_APP_URL=
+# DATABASE_URL=              # Database connection string
+# AI_MODEL_API_KEY=          # API key for AI vision/detection model
+# CLOUD_STORAGE_BUCKET=      # Storage for inspection photos/videos
+# NEXT_PUBLIC_APP_URL=       # Public-facing app URL
+# GEOLOCATION_API_KEY=       # Geolocation service key (if needed)
+# SIGNATURE_STORAGE_PATH=    # Path/bucket for signature data
 ```
 
 **Never commit `.env` files.** Use `.env.example` to document required variables without values.
